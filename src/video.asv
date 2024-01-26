@@ -1,0 +1,65 @@
+%% Setup
+vid = hex2dec('16c0');
+pid = hex2dec('0486');
+
+
+javaaddpath ../lib/SimplePacketComsJavaFat-0.6.4.jar;
+import edu.wpi.SimplePacketComs.*;
+import edu.wpi.SimplePacketComs.device.*;
+import edu.wpi.SimplePacketComs.phy.*;
+import java.util.*;
+import org.hid4java.*;
+version -java;
+myHIDSimplePacketComs=HIDfactory.get();
+myHIDSimplePacketComs.setPid(pid);
+myHIDSimplePacketComs.setVid(vid);
+myHIDSimplePacketComs.connect();
+
+robot = Robot(myHIDSimplePacketComs);
+tp = Traj_Planner();
+
+duration = 1;
+pause(6)
+current_location_angs = robot.measured_js(true, false);
+             cL = robot.fk3001(current_location_angs(1,:));
+             %xyz of current location
+             current_location = [cL(1,4), cL(2,4), cL(3,4)];
+             location = [95,0,150]; % home position
+                 
+             traj_coeffs(1,:) = tp.quintic_traj(duration, 0, 0, current_location(1), location(1), 0, 0);
+             traj_coeffs(2,:) = tp.quintic_traj(duration, 0, 0, current_location(2), location(2), 0, 0);
+             traj_coeffs(3,:) = tp.quintic_traj(duration, 0, 0, current_location(3), location(3), 0, 0);
+             
+             robot.run_trajectory(traj_coeffs, duration);
+             robot.openGripper(); 
+
+       
+
+             current_location_angs = robot.measured_js(true, false);
+             cL = robot.fk3001(current_location_angs(1,:));
+             %xyz of current location
+             current_location = [cL(1,4), cL(2,4), cL(3,4)];
+             destination1 = [72.93, -167.56, 46.37];
+             location = destination1; 
+                 
+             traj_coeffs(1,:) = tp.quintic_traj(duration, 0, 0, current_location(1), location(1), 0, 0);
+             traj_coeffs(2,:) = tp.quintic_traj(duration, 0, 0, current_location(2), location(2), 0, 0);
+             traj_coeffs(3,:) = tp.quintic_traj(duration, 0, 0, current_location(3), location(3), 0, 0);
+             
+             robot.run_trajectory(traj_coeffs, duration);
+
+
+             current_location_angs = robot.measured_js(true, false);
+             cL = robot.fk3001(current_location_angs(1,:));
+             %xyz of current location
+             current_location = [cL(1,4), cL(2,4), cL(3,4)];
+             destination2 = [85.81, 143.04, 5.92];
+             location = destination2; 
+                 
+             traj_coeffs(1,:) = tp.quintic_traj(duration, 0, 0, current_location(1), location(1), 0, 0);
+             traj_coeffs(2,:) = tp.quintic_traj(duration, 0, 0, current_location(2), location(2), 0, 0);
+             traj_coeffs(3,:) = tp.quintic_traj(duration, 0, 0, current_location(3), location(3), 0, 0);
+             
+             robot.run_trajectory(traj_coeffs, duration);
+
+             robot.shutdown()

@@ -1,0 +1,52 @@
+function image_processing()
+end
+
+% generate a mask for HSV system with desired max and minimum
+% assumption: all entered values are from 0 to 255
+% however in matlab: HSV are within 0 to 1
+function mask = generateMask(img, minHue, maxHue,minSat, maxSat, minVal, maxVal)
+hue = img(:,:,1); % extracts the hue value of the image
+saturation = img(:,:, 2);
+value = img(:, :, 3);
+
+% we are setting the bounds of the threshold..
+% we find what values are inside of the threshold
+minHueThreshold = hue > (minHue / 255); % generates a logical array where the hue is greater than
+                          % a given minimum.
+                         
+maxHueThreshold = hue < (maxHue / 255);
+
+minSatThreshold = saturation > (minSat / 255);
+maxSatThreshold = saturation < (maxSat / 255);
+
+minValThreshold = value > (minVal / 255);
+maxValThreshold = value < (maxVal / 255);
+
+% set all the values thata are outside of the threshold = 0
+hue(~(minHueThreshold & maxHueThreshold)) = 0;
+
+% all saturations outside of the threshold = 0
+% the way that logical array operations work as as follows:
+% it checks if the cell (n,m) is true, if so, it does the assignment
+saturation(~(minSatThreshold & maxSatThreshold)) = 0;
+
+value(~(minValThreshold & maxValThreshold));
+
+HSV_MASK = cat(3, hue, saturation, value);
+mask = all(HSV_MASK, 3); % logical array with array dimensions of values
+                         % to exclude.
+
+end
+
+function img_filtered = colorFilter(img, mask)
+hue = img(:,:,1); % extracts the hue value of the image
+saturation = img(:,:, 2);
+value = img(:, :, 3);
+
+
+hue(~mask);
+saturation = saturation * mask;
+value = value * mask;
+
+img_filtered = cat(3, hue, saturation, value);
+end

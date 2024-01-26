@@ -1,0 +1,39 @@
+%% Setup
+vid = hex2dec('16c0');
+pid = hex2dec('0486');
+
+
+javaaddpath ../lib/SimplePacketComsJavaFat-0.6.4.jar;
+import edu.wpi.SimplePacketComs.*;
+import edu.wpi.SimplePacketComs.device.*;
+import edu.wpi.SimplePacketComs.phy.*;
+import java.util.*;
+import org.hid4java.*;
+version -java;
+myHIDSimplePacketComs=HIDfactory.get();
+myHIDSimplePacketComs.setPid(pid);
+myHIDSimplePacketComs.setVid(vid);
+myHIDSimplePacketComs.connect();
+
+robot = Robot(myHIDSimplePacketComs);
+tp = Traj_Planner();
+
+duration = 1;
+pause(6)
+x = 0
+
+robot.servo_jp([0, -57.86 47.63])
+pause(1)
+while(x < 85)
+    robot.servo_jp([x, 1.5, 47.63])
+    pause(.05)
+    x = x+1
+end
+
+while (x > -85)
+    robot.servo_jp([x, -57.86, 47.63])
+    pause(.05)
+    x = x - 1
+end
+
+robot.shutdown()

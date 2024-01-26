@@ -1,0 +1,11 @@
+new_img = edge(mask, "canny");
+new_img = bwpropfilt(new_img, "Area", [0 1000]);
+stat = regionprops(new_img,'centroid');
+imshow(mask); hold on;
+
+for x = 1: numel(stat)
+   
+    plot(stat(x).Centroid(1),stat(x).Centroid(2),'ro');
+    
+end
+
